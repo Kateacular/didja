@@ -1,65 +1,177 @@
 <!DOCTYPE html>
-<html>
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Welcome to Firebase Hosting</title>
-
-    <!-- update the version number as needed -->
-    <script defer src="/__/firebase/3.9.0/firebase-app.js"></script>
-    <!-- include only the Firebase features as you need -->
-    <script defer src="/__/firebase/3.9.0/firebase-auth.js"></script>
-    <script defer src="/__/firebase/3.9.0/firebase-database.js"></script>
-    <script defer src="/__/firebase/3.9.0/firebase-messaging.js"></script>
-    <script defer src="/__/firebase/3.9.0/firebase-storage.js"></script>
-    <!-- initialize the SDK after all desired features are loaded -->
-    <script defer src="/__/firebase/init.js"></script>
-
-    <style media="screen">
-      body { background: #ECEFF1; color: rgba(0,0,0,0.87); font-family: Roboto, Helvetica, Arial, sans-serif; margin: 0; padding: 0; }
-      #message { background: white; max-width: 360px; margin: 100px auto 16px; padding: 32px 24px; border-radius: 3px; }
-      #message h2 { color: #ffa100; font-weight: bold; font-size: 16px; margin: 0 0 8px; }
-      #message h1 { font-size: 22px; font-weight: 300; color: rgba(0,0,0,0.6); margin: 0 0 16px;}
-      #message p { line-height: 140%; margin: 16px 0 24px; font-size: 14px; }
-      #message a { display: block; text-align: center; background: #039be5; text-transform: uppercase; text-decoration: none; color: white; padding: 16px; border-radius: 4px; }
-      #message, #message a { box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24); }
-      #load { color: rgba(0,0,0,0.4); text-align: center; font-size: 13px; }
-      @media (max-width: 600px) {
-        body, #message { margin-top: 0; background: white; box-shadow: none; }
-        body { border-top: 16px solid #ffa100; }
-      }
-    </style>
-  </head>
-  <body>
-    <div id="message">
-      <h2>Welcome</h2>
-      <h1>Firebase Hosting Setup Complete</h1>
-      <p>Changing our message! Hi, Kate!</p>
-      <a target="_blank" href="https://firebase.google.com/docs/hosting/">Open Hosting Documentation</a>
-    </div>
-    <p id="load">Firebase SDK Loading&hellip;</p>
-
-    <script>
-      document.addEventListener('DOMContentLoaded', function() {
-        // // 🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥
-        // // The Firebase SDK is initialized and available here!
-        //
-        // firebase.auth().onAuthStateChanged(user => { });
-        // firebase.database().ref('/path/to/ref').on('data', snapshot => { });
-        // firebase.messaging().requestPermission().then(() => { });
-        // firebase.storage().ref('/path/to/ref').getDownloadURL().then(() => { });
-        //
-        // // 🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥
-
-        try {
-          let app = firebase.app();
-          let features = ['auth', 'database', 'messaging', 'storage'].filter(feature => typeof app[feature] === 'function');
-          document.getElementById('load').innerHTML = `Firebase SDK loaded with ${features.join(', ')}`;
-        } catch (e) {
-          console.error(e);
-          document.getElementById('load').innerHTML = 'Error loading the Firebase SDK, check the console.';
+  <html>
+    <head>
+      <meta charset=utf-8 />
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Didja</title>
+      <script src="/__/firebase/3.9.0/firebase-app.js"></script>
+      <script src="/__/firebase/3.9.0/firebase-auth.js"></script>
+      <script src="/__/firebase/init.js"></script>
+      <link rel="stylesheet" type="text/css" href="style.css">
+      <script type="text/javascript">
+        //Handles the sign in button press.
+        function toggleSignIn() {
+          if (firebase.auth().currentUser) {
+            // [START signout]
+            firebase.auth().signOut();
+            // [END signout]
+          } else {
+            var email = document.getElementById('email').value;
+            var password = document.getElementById('password').value;
+            if (email.length < 4) {
+              alert('Please enter an email address.');
+              return;
+            }
+            if (password.length < 4) {
+              alert('Please enter a password.');
+              return;
+            }
+            // Sign in with email and pass.
+            // [START authwithemail]
+            firebase.auth().signInWithEmailAndPassword(email, password).catch(function(error) {
+              // Handle Errors here.
+              var errorCode = error.code;
+              var errorMessage = error.message;
+              // [START_EXCLUDE]
+              if (errorCode === 'auth/wrong-password') {
+                alert('Wrong password.');
+              } else {
+                alert(errorMessage);
+              }
+              console.log(error);
+              document.getElementById('quickstart-sign-in').disabled = false;
+              // [END_EXCLUDE]
+            });
+          // [END authwithemail]
+          }
+          document.getElementById('quickstart-sign-in').disabled = true;   
         }
-      });
-    </script>
+        function toggleSignIn2() {
+          if (!firebase.auth().currentUser) {
+            // [START createprovider]
+            var provider = new firebase.auth.GoogleAuthProvider();
+            // [END createprovider]
+            // [START addscopes]
+            provider.addScope('https://www.googleapis.com/auth/plus.login');
+            // [END addscopes]
+            // [START signin]
+            firebase.auth().signInWithPopup(provider).then(function(result) {
+              // This gives you a Google Access Token. You can use it to access the Google API.
+              var token = result.credential.accessToken;
+              // The signed-in user info.
+              var user = result.user;
+              // [START_EXCLUDE]
+             document.getElementById('quickstart-oauthtoken').textContent = token;
+              // [END_EXCLUDE]
+            }).catch(function(error) {
+              // Handle Errors here.
+              var errorCode = error.code;
+              var errorMessage = error.message;
+              // The email of the user's account used.
+              var email = error.email;
+              // The firebase.auth.AuthCredential type that was used.
+              var credential = error.credential;
+              // [START_EXCLUDE]
+              if (errorCode === 'auth/account-exists-with-different-credential') {
+                alert('You have already signed up with a different auth provider for that email.');
+                // If you are using multiple auth providers on your app you should handle linking
+                // the user's accounts here.
+              } else {
+                console.error(error);
+              }
+              // [END_EXCLUDE]
+            });      
+            // [END signin]    
+          } else {
+            // [START signout]
+            firebase.auth().signOut();
+           // [END signout]
+          }
+          // [START_EXCLUDE]
+          document.getElementById('quickstart-sign-in2').disabled = true;
+          // [END_EXCLUDE]
+        }
+        // [END buttoncallback]
+        /*
+         * initApp handles setting up UI event listeners and registering Firebase auth listeners:
+        *  - firebase.auth().onAuthStateChanged: This listener is called when the user is signed in or
+        *    out, and that is where we update the UI.
+        */
+        function initApp() {
+          // Listening for auth state changes.
+          // [START authstatelistener]
+          firebase.auth().onAuthStateChanged(function(user) {
+            // [START_EXCLUDE silent]
+            document.getElementById('quickstart-verify-email').disabled = true;
+            // [END_EXCLUDE]
+            if (user) {
+              // User is signed in.
+              var displayName = user.displayName;
+              var email = user.email;
+              var emailVerified = user.emailVerified;
+              var photoURL = user.photoURL;
+              var isAnonymous = user.isAnonymous;
+              var uid = user.uid;
+              var providerData = user.providerData;
+              // [START_EXCLUDE]
+              document.getElementById('quickstart-sign-in-status').textContent = 'Signed in';
+              document.getElementById('quickstart-sign-in').textContent = 'Sign out';
+              window.location = 'main.html';
+              //document.getElementById('quickstart-account-details').textContent = JSON.stringify(user, null, '  ');
+              // if (!emailVerified) {
+              //   document.getElementById('quickstart-verify-email').disabled = false;
+              // }
+
+               document.getElementById('member-content').textContent = 'Member Only Statement!';
+               document.getElementById('quickstart-sign-in2').disabled = true;
+              //document.getElementById('quickstart-account-details').textContent = JSON.stringify(user, null, '  ');
+              if (!emailVerified) {
+                document.getElementById('quickstart-verify-email').disabled = false;
+              }
+              // [END_EXCLUDE]
+            } else {
+              // User is signed out.
+              // [START_EXCLUDE]
+              document.getElementById('quickstart-sign-in-status').textContent = 'Signed out';
+              document.getElementById('quickstart-sign-in').textContent = 'Sign in';
+              document.getElementById('member-content').textContent = '';
+              document.getElementById('quickstart-sign-in2').disabled = false;
+              //document.getElementById('quickstart-account-details').textContent = 'null';
+              // [END_EXCLUDE]
+            }
+            // [START_EXCLUDE silent]
+            document.getElementById('quickstart-sign-in').disabled = false;
+            // [END_EXCLUDE]
+          });
+          // [END authstatelistener]
+          document.getElementById('quickstart-sign-in').addEventListener('click', toggleSignIn, false);
+          document.getElementById('quickstart-sign-in2').addEventListener('click', toggleSignIn2, false);
+          //document.getElementById('quickstart-sign-up').addEventListener('click', handleSignUp, false);
+          //document.getElementById('quickstart-verify-email').addEventListener('click', sendEmailVerification, false);
+          // document.getElementById('quickstart-password-reset').addEventListener('click', sendPasswordReset, false);
+        }
+        window.onload = function() {
+          initApp();
+        };
+      </script>
+    </head>
+  <body>
+  <!-- Header section containing title -->
+  <!-- Container for the demo -->
+  <h1 class="title">Didja</h1>
+    <div id="container">
+      <p>Enter your email and password below</p>
+      <input style="display:inline;width:auto;" type="text" id="email" name="email" placeholder="Email"/>
+      &nbsp;&nbsp;&nbsp;
+      <input  style="display:inline;width:auto;" type="password" id="password" name="password" placeholder="Password"/>
+      <br/><br/>
+      <button id="quickstart-sign-in" name="signin">Sign In</button>
+      <button class="mdl-button mdl-js-button mdl-button--raised" disabled id="quickstart-verify-email" name="verify-email">Send Email Verification</button>
+      <h1>Google Authentication </h1>
+      <p>Please sign in with your Google account below.</p>
+      <button id="quickstart-sign-in2" class="btn">Sign in with Google</button>
+      <p>Firebase sign-in status: <span id="quickstart-sign-in-status">Unknown</span>
+      <pre><code id="quickstart-account-details"></code></pre></p>
+    </div>
   </body>
 </html>
