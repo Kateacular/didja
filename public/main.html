@@ -1,29 +1,31 @@
 <!DOCTYPE html>
 <html>
-<head>
-	<title>Didja</title>
-	<script src="/__/firebase/3.9.0/firebase-app.js"></script>
-      <script src="/__/firebase/3.9.0/firebase-auth.js"></script>
-      <script src="/__/firebase/init.js"></script>
-
-</head>
-<body>
-<button id="sign-out">Sign Out</button>
-
-</body>
+	<head>
+		<title>Didja</title>
+		<script src="/__/firebase/3.9.0/firebase-app.js"></script>
+    	<script src="/__/firebase/3.9.0/firebase-auth.js"></script>
+    	<script src="/__/firebase/init.js"></script>
+	</head>
+	<body>
+	</body>
 	<script>
-
-		document.getElementById('sign-out').addEventListener('click', function(event) {
-
-			firebase.auth().signOut().then(function() {
-				window.location = 'index.html';
-
-			}, function(error) {
-
-		});
-
-	
-
+		firebase.auth().onAuthStateChanged(function(user) {
+  			if (user) {
+    			// User is signed in.
+		 		var signOutButton = document.createElement("BUTTON");
+ 				signOutButton.id = "sign-out";
+ 				signOutButton.innerHTML = "Sign Out";
+ 				document.body.appendChild(signOutButton);
+				document.getElementById('sign-out').addEventListener('click', function(event) {
+					firebase.auth().signOut().then(function() {
+						window.location = 'index.html';
+					}, function(error) {
+						//Nothing.
+					});
+				});
+			} else {
+		 		//Nothing
+			}
 		});
 	</script>
 </html>
