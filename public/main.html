@@ -19,12 +19,25 @@
 			</ul>
 			<div id="content-below-nav-1">
 				<span id="header-1">YOUR TASKS</span>
+				<p>Due: June 23rd *STUDY TAG*<br />
+				Go over the basics of Google Firebase for GM Job Quest. Go over the basics of Google Firebase for GM Job Quest. Go over the basics of Google Firebase for GM Job Quest. Go over the basics of Google Firebase for GM Job Quest. </p>
+
+				<p>Due: Jun 27th *SHOP TAG*<br />
+					Buy Spaghetti Noodles for Angela’s Pasta Night<br />
+					Buy Pasta Sauce for Angela’s Pasta Night</p>
+
+				<p>Due: June 30th *SHOP TAG*<br />
+					Buy Cake Mix for Saturday’s Dinner</p>
+
+				<p>Due: Aug 4th *ERRAND TAG*<br />
+					Cancel Amazon Prime Subscription</p>
 			</div>
 			<div id="content-below-nav-2">
-				<span id="header-2">START A TASK PROJECT</span>
+				<p>START A TASK PROJECT</p><p>Throwing a party or planning a picnic? Come over here if you need to set up and divvy out multiple tasks!</p><p><button class="button"><span>Get Started</span></button></p>
+
 			</div>
 			<div id="content-below-nav-3">
-				<span id="header-3">SCHEDULE A TASK</span>
+				<p>SCHEDULE A TASK</p><p>Do you keep forgetting to do the thing that you were supposed to do? Well, get over here and let's add it to your task list!</p><p><button class="button"><span>Do This</span></button></p>
 			</div>
 			<div id="content-below-nav-4">
 					Fourth
@@ -38,10 +51,10 @@
 		$(window).scroll(function(e){ 
   			var $el = $('#nav'); 
   			var isPositionFixed = ($el.css('position') == 'fixed');
-  				if ($(this).scrollTop() > 75 && !isPositionFixed){ 
+  				if ($(this).scrollTop() > 50 && !isPositionFixed){ 
     				$('#nav').css({'position': 'fixed', 'top': '0px'}); 
   				}
-  				if ($(this).scrollTop() < 75 && isPositionFixed) {
+  				if ($(this).scrollTop() < 50 && isPositionFixed) {
     				$('#nav').css({'position': 'static', 'top': '0px'}); 
   				} 
 		});
