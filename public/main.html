@@ -2,26 +2,29 @@
 <html>
 	<head>
 		<title>Didja</title>
+		<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Poppins">
 		<link rel="stylesheet" type="text/css" href="styles.css">
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
 		<script src="/__/firebase/3.9.0/firebase-app.js"></script>
     	<script src="/__/firebase/3.9.0/firebase-auth.js"></script>
     	<script src="/__/firebase/init.js"></script>
+
 	</head>
 	<body>
 		<div id="main-page">
-			<ul>
+			<ul id="nav">
 			  <li><a class="active">Main</a></li>
 			  <li><a>Blah</a></li>
 			  <li id="sign-out"><a>Sign Out</a></li>
 			</ul>
 			<div id="content-below-nav-1">
-					First
+				<span id="header-1">YOUR TASKS</span>
 			</div>
 			<div id="content-below-nav-2">
-					Third
+				<span id="header-2">START A TASK PROJECT</span>
 			</div>
 			<div id="content-below-nav-3">
-					Second
+				<span id="header-3">SCHEDULE A TASK</span>
 			</div>
 			<div id="content-below-nav-4">
 					Fourth
@@ -32,6 +35,16 @@
 		</div>
 	</body>
 	<script>
+		$(window).scroll(function(e){ 
+  			var $el = $('#nav'); 
+  			var isPositionFixed = ($el.css('position') == 'fixed');
+  				if ($(this).scrollTop() > 75 && !isPositionFixed){ 
+    				$('#nav').css({'position': 'fixed', 'top': '0px'}); 
+  				}
+  				if ($(this).scrollTop() < 75 && isPositionFixed) {
+    				$('#nav').css({'position': 'static', 'top': '0px'}); 
+  				} 
+		});
 		firebase.auth().onAuthStateChanged(function(user) {
   			if (user) {
     			// User is signed in.

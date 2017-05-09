@@ -1,18 +1,17 @@
 #main-page {
 	width: 1100px;
 	height: 1000px;
-  	margin: 0 auto;
+  margin: 0 auto;
 }
 
 #content-below-nav-1 {
 	width: 1100px;
 	height: 300px;
-  	background: red;
-  	margin-top: 46px;
+  background-image: url(https://nemo-uploads-clone.s3.amazonaws.com/uploads/product/image/2246/neutral_product_silversoho.jpg);
 }
 
 #content-below-nav-2 {
-	background: green;
+	background: #F3F6F8;
 	width: 550px;
 	height: 350px;
 	display: block;
@@ -20,7 +19,7 @@
 }
 
 #content-below-nav-3 {
-	background: yellow;
+	background: #E9EFF3;
 	width: 550px;
 	height: 350px;
 	display: block;
@@ -29,29 +28,30 @@
 #content-below-nav-4 {
 	width: 1100px;
 	height: 300px;
-  	background: lightblue;
+  background: #FFFFFF;
 }
 #content-below-nav-5 {
 	width: 1100px;
 	height: 46px;
-  	background: #333;
+  background: #333;
+  color: white;
 }
 
 body {
 	margin:0;
-	background-color: slategrey;
+	background-color: #ededed;
+  font-family:"Poppins", sans-serif; 
 }
 
-ul {
+#nav {
     list-style-type: none;
     margin: 0;
     padding: 0;
     overflow: hidden;
     background-color: #333;
-    position: fixed;
-    top: 0;
     width: 1100px;
-
+    position: absolute
+    top: 0px;
 }
 
 li {
@@ -71,5 +71,5 @@ li a:hover:not(.active) {
 }
 
 .active {
-    background-color: lightblue;
+    background-color: #cedbe2;
 }
