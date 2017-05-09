@@ -2,30 +2,53 @@
 <html>
 	<head>
 		<title>Didja</title>
+		<link rel="stylesheet" type="text/css" href="styles.css">
 		<script src="/__/firebase/3.9.0/firebase-app.js"></script>
     	<script src="/__/firebase/3.9.0/firebase-auth.js"></script>
     	<script src="/__/firebase/init.js"></script>
 	</head>
 	<body>
+		<div id="main-page">
+			<ul>
+			  <li><a class="active">Main</a></li>
+			  <li><a>Blah</a></li>
+			  <li id="sign-out"><a>Sign Out</a></li>
+			</ul>
+			<div id="content-below-nav-1">
+					First
+			</div>
+			<div id="content-below-nav-2">
+					Third
+			</div>
+			<div id="content-below-nav-3">
+					Second
+			</div>
+			<div id="content-below-nav-4">
+					Fourth
+			</div>
+			<div id="content-below-nav-5">
+					Fifth
+			</div>
+		</div>
 	</body>
 	<script>
 		firebase.auth().onAuthStateChanged(function(user) {
   			if (user) {
     			// User is signed in.
-		 		var signOutButton = document.createElement("BUTTON");
- 				signOutButton.id = "sign-out";
- 				signOutButton.innerHTML = "Sign Out";
- 				document.body.appendChild(signOutButton);
 				document.getElementById('sign-out').addEventListener('click', function(event) {
 					firebase.auth().signOut().then(function() {
 						window.location = 'index.html';
 					}, function(error) {
-						//Nothing.
+						// Do Nothing.
 					});
 				});
 			} else {
-		 		//Nothing
+		 		// User is signed out.
+		 		document.getElementById('sign-out').innerHTML = "<a>Sign In</a>";
+		 		document.getElementById('sign-out').addEventListener('click', function(event) {
+						window.location = 'index.html';
+				});
 			}
 		});
 	</script>
-</html>
+</html> 
