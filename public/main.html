@@ -5,39 +5,38 @@
 		<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Poppins">
 		<link rel="stylesheet" type="text/css" href="styles.css">
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
+        <link type="text/css" rel="Stylesheet" href="jqwidgets-ver4.5.2/jqwidgets/styles/jqx.base.css" />
+        <script type="text/javascript" src="jqwidgets-ver4.5.2/scripts/jquery-1.11.1.min.js"></script>
+        <script type="text/javascript" src="jqwidgets-ver4.5.2/jqwidgets/jqxcore.js"></script>
+        <script type="text/javascript" src="jqwidgets-ver4.5.2/jqwidgets/jqxpopover.js"></script>
+        <script type="text/javascript" src="jqwidgets-ver4.5.2/jqwidgets/jqxbuttons.js"></script>
+        <script type="text/javascript" src="jqwidgets-ver4.5.2/scripts/demos.js"></script>
 		<script src="/__/firebase/3.9.0/firebase-app.js"></script>
     	<script src="/__/firebase/3.9.0/firebase-auth.js"></script>
+    	<script src="/__/firebase/3.9.0/firebase-database.js"></script>
     	<script src="/__/firebase/init.js"></script>
-
 	</head>
 	<body>
 		<div id="main-page">
 			<ul id="nav">
 			  <li><a class="active">Main</a></li>
-			  <li><a>Blah</a></li>
+			  <li id="blah"><a>Blah</a></li>
 			  <li id="sign-out"><a>Sign Out</a></li>
 			</ul>
 			<div id="content-below-nav-1">
 				<span id="header-1">YOUR TASKS</span>
-				<p>Due: June 23rd *STUDY TAG*<br />
-				Go over the basics of Google Firebase for GM Job Quest. Go over the basics of Google Firebase for GM Job Quest. Go over the basics of Google Firebase for GM Job Quest. Go over the basics of Google Firebase for GM Job Quest. </p>
-
-				<p>Due: Jun 27th *SHOP TAG*<br />
-					Buy Spaghetti Noodles for Angela’s Pasta Night<br />
-					Buy Pasta Sauce for Angela’s Pasta Night</p>
-
-				<p>Due: June 30th *SHOP TAG*<br />
-					Buy Cake Mix for Saturday’s Dinner</p>
-
-				<p>Due: Aug 4th *ERRAND TAG*<br />
-					Cancel Amazon Prime Subscription</p>
+				<p id="test-new-2"></p>
+				<p id="test-new"></p>
 			</div>
 			<div id="content-below-nav-2">
 				<p>START A TASK PROJECT</p><p>Throwing a party or planning a picnic? Come over here if you need to set up and divvy out multiple tasks!</p><p><button class="button"><span>Get Started</span></button></p>
-
 			</div>
+			<div id="popover-three">
+            <div id="third-inner">
+            </div>
+        </div>
 			<div id="content-below-nav-3">
-				<p>SCHEDULE A TASK</p><p>Do you keep forgetting to do the thing that you were supposed to do? Well, get over here and let's add it to your task list!</p><p><button class="button"><span>Do This</span></button></p>
+				<p>SCHEDULE A TASK</p><p>Do you keep forgetting to do the thing that you were supposed to do? Well, get over here and let's add it to your task list!</p><p><button id="single-task" class="button"><span>Do This</span></button></p>
 			</div>
 			<div id="content-below-nav-4">
 					Fourth
@@ -57,17 +56,63 @@
   				if ($(this).scrollTop() < 50 && isPositionFixed) {
     				$('#nav').css({'position': 'static', 'top': '0px'}); 
   				} 
-		});
+		});	
+		$(document).ready(function () {
+                // prepare the data
+                var thirdInnerDiv = $("#third-inner");
+                    thirdInnerDiv[0].innerHTML += "<form action=\"javascript:doThis();\"><p><input id=\"task-title\" /required> Task Title</input></p><p><select id=\"task-tag\"><option selected=\"selected\">*DEFAULT TAG*</option><option>*ERRAND TAG*</option><option>*SHOP TAG*</option><option>*STUDY TAG*</option></select> Tag</p><p><input id=\"task-desc\" /required> Task Description</input></p><p><input type=\"date\" id=\"task-date\" /required> Due Date</input></p><p><button>Submit</button></form>";
+                    thirdInnerDiv[0].style = "width:500px;height:250px"
+                $("#popover-three").jqxPopover({offset: { left: 175, top: 200 }, isModal: true, position: "up", title: "Single-Task", showCloseButton: true, selector: $("#single-task") });
+    	});
+	 	var doThis = function() {
+			var newContent = document.getElementById('test-new-2');
+			var setTitle = document.getElementById('task-title').value;
+			var setTag = document.getElementById('task-tag').value;
+			var setDesc = document.getElementById('task-desc').value;
+			var setDate = document.getElementById('task-date').value;
+			var res = setDate.split("-", 3);
+			firebase.auth().onAuthStateChanged(function(user) {
+				var formToDatabase = "<p>Due: "+ res[1] + "/" + res[2] + " " + setTag + "<br />" + setDesc + " for " + setTitle + "</p>";
+				var postData = {
+					task: formToDatabase
+				}
+				var uid = user.uid;
+				var userRef2 = firebase.database().ref("users-tasks/" + uid + "/task-list/");
+				var newPostKey = userRef2.push().key;
+				var updates = {};
+  				updates['/users-tasks/' + uid + "/task-list/" + newPostKey] = postData;
+
+ 				 return firebase.database().ref().update(updates);
+
+
+				
+			});	
+		}
 		firebase.auth().onAuthStateChanged(function(user) {
-  			if (user) {
-    			// User is signed in.
-				document.getElementById('sign-out').addEventListener('click', function(event) {
-					firebase.auth().signOut().then(function() {
-						window.location = 'index.html';
-					}, function(error) {
-						// Do Nothing.
+			if (user) {
+				var uid = user.uid;
+				var userRef = firebase.database().ref("users-tasks/" + uid + "/task-list");
+				userRef.on("value", function(snapshot) {
+						value = snapshot.val();
+						keyValues = Object.values(value);
+						/*document.getElementById('test-new').innerHTML = "<a>" + keyValues.join(""); + "</a>";*/
+						var lines = [];
+						for (i = 0; i <= keyValues.length -1; i++) {
+
+							lines.push(Object.values(keyValues[i]));
+						document.getElementById('test-new').innerHTML = lines.join("");
+					}
+					}, function (error) {
+					   document.getElementById('testcontent').textContent = 'Database Error';
 					});
+			// User is signed in.
+			document.getElementById('sign-out').addEventListener('click', function(event) {
+				firebase.auth().signOut().then(function() {
+					window.location = 'index.html';
+				}, function(error) {
+					// Do Nothing.
 				});
+		});
 			} else {
 		 		// User is signed out.
 		 		document.getElementById('sign-out').innerHTML = "<a>Sign In</a>";
