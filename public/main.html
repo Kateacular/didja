@@ -25,7 +25,6 @@
 			</ul>
 			<div id="content-below-nav-1">
 				<span id="header-1">YOUR TASKS</span>
-				<p id="test-new-2"></p>
 				<p id="test-new"></p>
 			</div>
 			<div id="content-below-nav-2">
@@ -39,10 +38,10 @@
 				<p>SCHEDULE A TASK</p><p>Do you keep forgetting to do the thing that you were supposed to do? Well, get over here and let's add it to your task list!</p><p><button id="single-task" class="button"><span>Do This</span></button></p>
 			</div>
 			<div id="content-below-nav-4">
-					Fourth
+				Fourth
 			</div>
 			<div id="content-below-nav-5">
-					Fifth
+				Fifth
 			</div>
 		</div>
 	</body>
@@ -65,14 +64,13 @@
                 $("#popover-three").jqxPopover({offset: { left: 175, top: 200 }, isModal: true, position: "up", title: "Single-Task", showCloseButton: true, selector: $("#single-task") });
     	});
 	 	var doThis = function() {
-			var newContent = document.getElementById('test-new-2');
 			var setTitle = document.getElementById('task-title').value;
 			var setTag = document.getElementById('task-tag').value;
 			var setDesc = document.getElementById('task-desc').value;
 			var setDate = document.getElementById('task-date').value;
 			var res = setDate.split("-", 3);
 			firebase.auth().onAuthStateChanged(function(user) {
-				var formToDatabase = "<p>Due: "+ res[1] + "/" + res[2] + " " + setTag + "<br />" + setDesc + " for " + setTitle + "</p>";
+				var formToDatabase = "<p class=\"task-line\">Due: "+ res[1] + "/" + res[2] + " " + setTag + "<br />" + setDesc + " for " + setTitle + "<sup>delete</sup></p>";
 				var postData = {
 					task: formToDatabase
 				}
@@ -82,37 +80,59 @@
 				var updates = {};
   				updates['/users-tasks/' + uid + "/task-list/" + newPostKey] = postData;
 
- 				 return firebase.database().ref().update(updates);
-
-
-				
+ 				 return firebase.database().ref().update(updates);	
 			});	
 		}
 		firebase.auth().onAuthStateChanged(function(user) {
 			if (user) {
 				var uid = user.uid;
-				var userRef = firebase.database().ref("users-tasks/" + uid + "/task-list");
+				var userRef = firebase.database().ref("users-tasks/" + uid + "/task-list/");
+				var userRef2 = firebase.database().ref("users-tasks/" + uid);
+				
 				userRef.on("value", function(snapshot) {
-						value = snapshot.val();
-						keyValues = Object.values(value);
-						/*document.getElementById('test-new').innerHTML = "<a>" + keyValues.join(""); + "</a>";*/
-						var lines = [];
-						for (i = 0; i <= keyValues.length -1; i++) {
+					value = snapshot.val();
 
-							lines.push(Object.values(keyValues[i]));
+					if (value) {
+					keyValues = Object.values(value);
+					keyNames = Object.keys(value);
+					var lines = [];
+					for (i = 0; i <= keyValues.length - 1 ; i++) {
+						lines.push(Object.values(keyValues[i]));
 						document.getElementById('test-new').innerHTML = lines.join("");
 					}
-					}, function (error) {
-					   document.getElementById('testcontent').textContent = 'Database Error';
-					});
-			// User is signed in.
-			document.getElementById('sign-out').addEventListener('click', function(event) {
-				firebase.auth().signOut().then(function() {
-					window.location = 'index.html';
-				}, function(error) {
-					// Do Nothing.
+					
+					for (i = 0; i <= keyValues.length - 1; i++) {
+						document.getElementById('test-new').getElementsByClassName('task-line')[i].getElementsByTagName('sup')[0].id = "sup" + (i+1);
+					}
+
+					for (i = 0; i <= keyValues.length -1; i++) {
+						document.getElementById('sup'+(i+1)).addEventListener('click', function(event) {		
+							var idNum = parseInt((this.id).replace(/\D/g,''));
+							alert(keyNames[idNum-1]);			
+							firebase.database().ref("users-tasks/" + uid + "/task-list/" + keyNames[idNum-1]).remove();
+						});
+					}	
+				} else {
+					document.getElementById('test-new').innerHTML = "You have no tasks! Must be nice..."
+				}
+				}, function (error) {
+				   document.getElementById('testcontent').textContent = 'Database Error';
 				});
-		});
+				document.getElementById('sign-out').addEventListener('click', function(event){
+					firebase.auth().signOut().then(function() {
+						window.location = 'index.html';
+					}, function(error) {
+						// Do Nothing.
+					});
+				});
+
+				document.getElementById('sign-out').addEventListener('click', function(event){
+						firebase.auth().signOut().then(function() {
+							window.location = 'index.html';
+						}, function(error) {
+							// Do Nothing.
+						});
+				});	
 			} else {
 		 		// User is signed out.
 		 		document.getElementById('sign-out').innerHTML = "<a>Sign In</a>";
